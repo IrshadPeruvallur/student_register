@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:student_register/function/db_function.dart';
 
-final _nameController = TextEditingController();
-final _ageController = TextEditingController();
-final _phoneController = TextEditingController();
-final _addressController = TextEditingController();
-final _formKey = GlobalKey<FormState>();
+// final nameController = TextEditingController();
+// final _ageController = TextEditingController();
+// final _phoneController = TextEditingController();
+// final _addressController = TextEditingController();
+// final _formKey = GlobalKey<FormState>();
 
 Widget buildStudentList() {
-  return GestureDetector(
-    onTap: () => print('clicked'),
-    child: ListView.separated(
-        separatorBuilder: (context, index) => Divider(),
-        itemBuilder: (context, index) => ListTile(
+  return ValueListenableBuilder(
+      valueListenable: studentListNotifier,
+      builder: (context, studentList, child) {
+        return ListView.separated(
+          separatorBuilder: (context, index) => Divider(),
+          itemBuilder: (context, index) {
+            final data = studentList[index];
+            return ListTile(
+              onTap: () {
+                print('object');
+              },
               title: Text(
-                "Text",
+                data.name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
-              subtitle: Text("sub"),
-              trailing: Icon(Icons.delete),
-            ),
-        itemCount: 10),
-  );
+              subtitle: Text(data.phone),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  deleteStudent(index);
+                },
+              ),
+            );
+          },
+          itemCount: studentList.length,
+        );
+      });
 }
 
 Widget buildTextField({
@@ -35,36 +49,33 @@ Widget buildTextField({
 }) {
   return Padding(
     padding: const EdgeInsets.all(15.0),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          TextFormField(
-            controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Please enter $label";
-              }
-              return null; // Add this line to indicate no validation error
-            },
-            maxLength: maxLength,
-            keyboardType: keyboardType,
-            inputFormatters: [
-              if (keyboardType == TextInputType.phone)
-                FilteringTextInputFormatter.digitsOnly,
-            ],
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              labelText: label,
+    child: Column(
+      children: [
+        TextFormField(
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter $label";
+            }
+            return null;
+          },
+          maxLength: maxLength,
+          keyboardType: keyboardType,
+          inputFormatters: [
+            if (keyboardType == TextInputType.phone)
+              FilteringTextInputFormatter.digitsOnly,
+          ],
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
+            labelText: label,
           ),
-          SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+      ],
     ),
   );
 }

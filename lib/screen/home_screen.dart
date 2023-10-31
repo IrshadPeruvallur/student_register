@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:student_register/function/db_function.dart';
 import 'package:student_register/screen/add_details.dart';
+import 'package:student_register/screen/student_data.dart';
 import 'package:student_register/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -7,6 +9,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getAllStudent();
     return Scaffold(
       appBar: AppBar(actions: [Icon(Icons.search)]),
       body: buildStudentList(),

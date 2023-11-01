@@ -24,7 +24,11 @@ Widget buildStudentList() {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => StudentData(),
+                      builder: (context) => StudentData(
+                          name: data.name,
+                          age: data.age,
+                          number: data.phone,
+                          email: data.email),
                     ));
               },
               title: Text(

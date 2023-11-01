@@ -5,12 +5,13 @@ import 'package:student_register/screen/student_data.dart';
 import 'package:student_register/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     getAllStudent();
     return Scaffold(
+      // backgroundColor: Color.fromARGB(255, 33, 68, 51),
       appBar: AppBar(actions: [Icon(Icons.search)]),
       body: buildStudentList(),
       floatingActionButton: FloatingActionButton(

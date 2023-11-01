@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:student_register/function/db_function.dart';
+import 'package:student_register/screen/edit_screen.dart';
+import 'package:student_register/screen/student_data.dart';
 
 // final nameController = TextEditingController();
 // final _ageController = TextEditingController();
@@ -18,7 +20,12 @@ Widget buildStudentList() {
             final data = studentList[index];
             return ListTile(
               onTap: () {
-                print('object');
+                print('Data button clicked');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StudentData(),
+                    ));
               },
               title: Text(
                 data.name,
@@ -28,11 +35,31 @@ Widget buildStudentList() {
                 ),
               ),
               subtitle: Text(data.phone),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  deleteStudent(index);
-                },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      deleteStudent(index);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditDeatils(
+                                name: data.name,
+                                age: data.age,
+                                number: data.phone,
+                                email: data.email,
+                                index: index),
+                          ));
+                    },
+                  ),
+                ],
               ),
             );
           },
@@ -48,32 +75,31 @@ Widget buildTextField({
   TextInputType keyboardType = TextInputType.text,
 }) {
   return Padding(
-    padding: const EdgeInsets.all(15.0),
+    padding: const EdgeInsets.symmetric(horizontal: 75),
     child: Column(
       children: [
-        TextFormField(
-          controller: controller,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Please enter $label";
-            }
-            return null;
-          },
-          maxLength: maxLength,
-          keyboardType: keyboardType,
-          inputFormatters: [
-            if (keyboardType == TextInputType.phone)
-              FilteringTextInputFormatter.digitsOnly,
-          ],
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
+        Center(
+          child: TextFormField(
+            controller: controller,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter $label";
+              }
+              return null;
+            },
+            maxLength: maxLength,
+            keyboardType: keyboardType,
+            inputFormatters: [
+              if (keyboardType == TextInputType.phone)
+                FilteringTextInputFormatter.digitsOnly,
+            ],
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              labelText: label,
             ),
-            labelText: label,
           ),
-        ),
-        SizedBox(
-          height: 10,
         ),
       ],
     ),

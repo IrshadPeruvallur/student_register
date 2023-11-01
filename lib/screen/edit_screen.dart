@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:student_register/function/db_function.dart';
 import 'package:student_register/function/nr_function.dart';
-import 'package:student_register/model/data_model.dart';
-import 'package:student_register/widgets/widgets.dart'; // Import for StudentModel
+import 'package:student_register/screen/add_details.dart';
+import 'package:student_register/widgets/widgets.dart';
 
-final nameController = TextEditingController();
-final ageController = TextEditingController();
-final numberController = TextEditingController();
-final emailController = TextEditingController();
-final formKey = GlobalKey<FormState>();
+class EditDeatils extends StatefulWidget {
+  final String name;
+  final String age;
+  final String number;
+  final String email;
+  final int index;
 
-class AddDetails extends StatelessWidget {
-  AddDetails({Key? key}) : super(key: key);
+  const EditDeatils(
+      {super.key,
+      required this.name,
+      required this.age,
+      required this.number,
+      required this.email,
+      required this.index});
+
+  @override
+  State<EditDeatils> createState() => _EditDeatilsState();
+}
+
+class _EditDeatilsState extends State<EditDeatils> {
+  @override
+  void initState() {
+    nameController.text = widget.name;
+    ageController.text = widget.age;
+    numberController.text = widget.number;
+    emailController.text = widget.number;
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +71,7 @@ class AddDetails extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    addOnButtonClick(context);
+                    updateStudent(context, widget.index);
                   }
                 },
                 child: Text("Submit"),

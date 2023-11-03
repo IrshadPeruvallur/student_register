@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_register/function/db_function.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/widgets/widgets.dart'; // Import for StudentModel
+import 'package:student_register/widgets/widgets.dart';
 
 final nameController = TextEditingController();
 final ageController = TextEditingController();
@@ -28,7 +28,6 @@ class _AddDetailsState extends State<AddDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Color.fromARGB(12, 58, 45, 255),
       appBar: AppBar(
         title: Text("Add Details"),
       ),
@@ -93,7 +92,7 @@ class _AddDetailsState extends State<AddDetails> {
     );
   }
 
-  void addOnButtonClick(BuildContext context) {
+  void addOnButtonClick(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       final name = nameController.text.trim();
       final age = ageController.text.trim();

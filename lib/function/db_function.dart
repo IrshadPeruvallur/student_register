@@ -3,7 +3,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_register/model/data_model.dart';
 import 'package:student_register/screen/add_details.dart';
 import 'package:student_register/screen/edit_screen.dart';
-import 'package:student_register/screen/home_screen.dart';
 
 ValueNotifier<List<StudentModel>> studentListNotifier = ValueNotifier([]);
 

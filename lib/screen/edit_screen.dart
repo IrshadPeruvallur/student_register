@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -36,6 +38,7 @@ class _EditDeatilsState extends State<EditDeatils> {
     ageController.text = widget.age;
     numberController.text = widget.number;
     emailController.text = widget.number;
+
     selectImage = widget.image != null ? File(widget.image) : null;
 
     // TODO: implement initState

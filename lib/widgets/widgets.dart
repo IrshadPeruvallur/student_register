@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:student_register/function/db_function.dart';
@@ -19,6 +21,10 @@ Widget buildStudentList() {
           itemBuilder: (context, index) {
             final data = studentList[index];
             return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Color.fromARGB(255, 43, 112, 190),
+                backgroundImage: FileImage(File(data.image)),
+              ),
               onTap: () {
                 print('Data button clicked');
                 Navigator.push(
@@ -59,6 +65,7 @@ Widget buildStudentList() {
                                 age: data.age,
                                 number: data.phone,
                                 email: data.email,
+                                image: data.image,
                                 index: index),
                           ));
                     },

@@ -13,11 +13,14 @@ class StudentModel {
   final String phone;
   @HiveField(4)
   final String email;
+  @HiveField(5)
+  final String image;
 
   StudentModel(
       {required this.name,
       required this.age,
       required this.phone,
       required this.email,
-      this.index});
+      this.index,
+      required this.image});
 }

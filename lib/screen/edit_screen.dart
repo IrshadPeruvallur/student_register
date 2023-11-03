@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:student_register/function/db_function.dart';
-import 'package:student_register/function/nr_function.dart';
 import 'package:student_register/screen/add_details.dart';
 import 'package:student_register/widgets/widgets.dart';
+
+File? selectImage;
 
 class EditDeatils extends StatefulWidget {
   final String name;
   final String age;
   final String number;
   final String email;
+  final String image;
   final int index;
 
   const EditDeatils(
@@ -17,6 +21,7 @@ class EditDeatils extends StatefulWidget {
       required this.age,
       required this.number,
       required this.email,
+      required this.image,
       required this.index});
 
   @override
@@ -26,12 +31,14 @@ class EditDeatils extends StatefulWidget {
 class _EditDeatilsState extends State<EditDeatils> {
   @override
   void initState() {
+    super.initState();
     nameController.text = widget.name;
     ageController.text = widget.age;
     numberController.text = widget.number;
     emailController.text = widget.number;
+    selectImage = widget.image != null ? File(widget.image) : null;
+
     // TODO: implement initState
-    super.initState();
   }
 
   @override

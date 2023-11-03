@@ -4,8 +4,20 @@ import 'package:student_register/screen/add_details.dart';
 import 'package:student_register/screen/student_data.dart';
 import 'package:student_register/widgets/widgets.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllStudent();
+  }
 
   @override
   Widget build(BuildContext context) {

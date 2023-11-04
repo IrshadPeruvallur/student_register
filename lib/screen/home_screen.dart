@@ -10,31 +10,32 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
-  List<StudentModel> studentList = [];
-  List<StudentModel> filterStudentList = [];
+  List<studentModel> studentList = [];
+  List<studentModel> filteredStudentList = [];
+
   bool isSearching = false;
+
   @override
   void initState() {
-    // Call getAllStudent() only once in the initState
-
     super.initState();
-    getAllStudent();
+    // Initialize your studentList here, e.g., calling getAllStud()
+    getAllStud();
   }
 
   void filterStudents(String search) {
     if (search.isEmpty) {
       // If the search query is empty, show all students.
       setState(() {
-        filterStudentList = List.from(studentList);
+        filteredStudentList = List.from(studentList);
       });
     } else {
       setState(() {
-        filterStudentList = studentList
+        filteredStudentList = studentList
             .where((student) =>
                 student.name.toLowerCase().contains(search.toLowerCase()))
             .toList();
@@ -44,52 +45,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getAllStudent();
-    return Scaffold(
-      // backgroundColor: Color.fromARGB(255, 33, 68, 51),
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: isSearching ? buildSearchField() : Text("Student List"),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isSearching = !isSearching;
-                if (!isSearching) {
-                  // Clear the search query and show all students.
-                  searchController.clear();
-                  filterStudentList = List.from(studentList);
-                }
-              });
-            },
-            icon: Icon(isSearching ? Icons.cancel : Icons.search),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color.fromARGB(255, 235, 245, 251),
+        appBar: AppBar(
+          elevation: 15,
+          centerTitle: true,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(25))),
+          backgroundColor: Color.fromARGB(255, 27, 79, 144),
+          title: isSearching ? buildSearchField() : Text("Student List"),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  isSearching = !isSearching;
+                  if (!isSearching) {
+                    // Clear the search query and show all students.
+                    searchController.clear();
+                    filteredStudentList = List.from(studentList);
+                  }
+                });
+              },
+              icon: Icon(isSearching ? Icons.cancel : Icons.search),
+            ),
+          ],
+        ),
+        body: Center(
+          child: isSearching
+              ? filteredStudentList.isNotEmpty
+                  ? ListView.separated(
+                      itemBuilder: (ctx, index) {
+                        final data = filteredStudentList[index];
+                        return buildStudentCard(data, index);
+                      },
+                      separatorBuilder: (ctx, index) {
+                        return const Divider();
+                      },
+                      itemCount: filteredStudentList.length,
+                    )
+                  : Center(
+                      child: Text("No results found."),
+                    )
+              : buildStudentList(),
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.fromLTRB(30, 5, 0, 0),
+          child: Container(
+            width: double.infinity,
+            child: FloatingActionButton.extended(
+              backgroundColor: Color.fromARGB(255, 27, 79, 144),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddDetails(),
+                  ),
+                );
+              },
+              label: Text("Add Student"),
+              icon: Icon(Icons.add),
+            ),
           ),
-        ],
-      ),
-      body: Center(
-        child: isSearching
-            ? filterStudentList.isNotEmpty
-                ? ListView.separated(
-                    itemBuilder: (context, index) {
-                      final data = filterStudentList[index];
-                      return buildStudentTile(data, index);
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    itemCount: filterStudentList.length)
-                : Center(child: Text("No results found"))
-            : buildStudentList(),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddDetails(),
-            )),
-        child: Icon(Icons.person_add),
+        ),
       ),
     );
   }
@@ -114,77 +133,93 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildStudentList() {
-    return ValueListenableBuilder(
-        valueListenable: studentListNotifier,
-        builder:
-            (BuildContext ctx, List<StudentModel> studentlist, Widget? child) {
-          studentList = studentlist;
-          filterStudentList = List.from(studentList);
-          return ListView.separated(
-            separatorBuilder: (context, index) => Divider(),
-            itemBuilder: (context, index) {
-              final data = studentList[index];
-              return buildStudentTile(data, index);
-            },
-            itemCount: studentList.length,
-          );
-        });
-  }
-
-  Widget buildStudentTile(StudentModel data, int index) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Color.fromARGB(255, 43, 112, 190),
-        backgroundImage: FileImage(File(data.image)),
-      ),
-      onTap: () {
-        print('Data button clicked');
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => StudentData(
-                  name: data.name,
-                  age: data.age,
-                  number: data.phone,
-                  email: data.email),
-            ));
-      },
-      title: Text(
-        data.name,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
-      ),
-      subtitle: Text(data.phone),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              deleteStudent(index);
-            },
+  Widget buildStudentCard(studentModel data, int index) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15))),
+        child: ListTile(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StudentDat(
+                      name: data.name,
+                      age: data.age,
+                      number: data.number,
+                      email: data.email,
+                      image: data.image),
+                ));
+          },
+          leading: CircleAvatar(
+            radius: 25,
+            backgroundColor: Color.fromARGB(255, 43, 112, 190),
+            backgroundImage: FileImage(File(data.image)),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditDeatils(
+          title: Text(
+            data.name,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            data.number,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditDetails(
+                        index: index,
                         name: data.name,
                         age: data.age,
-                        number: data.phone,
+                        number: data.number,
                         email: data.email,
                         image: data.image,
-                        index: index),
-                  ));
-            },
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.edit),
+              ),
+              IconButton(
+                onPressed: () {
+                  deletestud(index);
+                },
+                icon: Icon(Icons.delete_rounded),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget buildStudentList() {
+    return ValueListenableBuilder(
+      valueListenable: studenlistnotfier,
+      builder:
+          (BuildContext ctx, List<studentModel> studentlist, Widget? child) {
+        studentList = studentlist;
+        filteredStudentList = List.from(studentList);
+
+        return ListView.separated(
+          itemBuilder: (ctx, index) {
+            final data = studentList[index];
+            return buildStudentCard(data, index);
+          },
+          separatorBuilder: (ctx, index) {
+            return const Divider();
+          },
+          itemCount: studentList.length,
+        );
+      },
     );
   }
 }

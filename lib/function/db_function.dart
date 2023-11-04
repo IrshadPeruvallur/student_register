@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/widgets.dart';
+import 'package:hive/hive.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/screen/add_details.dart';
 import 'package:student_register/screen/edit_screen.dart';
+import 'package:student_register/screen/home_screen.dart';
 
-ValueNotifier<List<StudentModel>> studentListNotifier = ValueNotifier([]);
+ValueNotifier<List<studentModel>> studenlistnotfier = ValueNotifier([]);
 
-void addStudent(StudentModel value) async {
-  final studentDB = await Hive.openBox<StudentModel>('student_db');
-  await studentDB.add(value);
-  getAllStudent();
+Future<void> addstud(studentModel value) async {
+  final studentDb = await Hive.openBox<studentModel>("student_db");
+  await studentDb.add(value);
+  getAllStud();
 }
 
-void getAllStudent() async {
-  final studentDB = await Hive.openBox<StudentModel>('student_db');
-  studentListNotifier.value.clear();
-  studentListNotifier.value.addAll(studentDB.values);
-  studentListNotifier.notifyListeners();
+Future<void> getAllStud() async {
+  final studentDb = await Hive.openBox<studentModel>("student_db");
+  studenlistnotfier.value.clear();
+  studenlistnotfier.value.addAll(studentDb.values);
+  studenlistnotfier.notifyListeners();
 }
 
-void deleteStudent(int index) async {
-  final studentDB = await Hive.openBox<StudentModel>('student_db');
-  await studentDB.deleteAt(index);
-  getAllStudent();
+Future<void> deletestud(int index) async {
+  final studentDb = await Hive.openBox<studentModel>("student_db");
+  await studentDb.deleteAt(index);
+  getAllStud();
 }
 
-void updateStudent(BuildContext context, int index) async {
-  final studentDB = await Hive.openBox<StudentModel>('student_db');
-  if (index >= 0 && index < studentDB.length) {
-    final updatedStudent = StudentModel(
-        name: nameController.text,
-        age: ageController.text,
-        phone: numberController.text,
-        email: emailController.text,
-        image: selectImage!.path);
-    await studentDB.putAt(index, updatedStudent);
-    getAllStudent();
-    Navigator.pop(context);
+Future<void> updateStudent(int index) async {
+  final studentDb = await Hive.openBox<studentModel>("student_db");
+
+  if (index >= 0 && index < studentDb.length) {
+    final updatedStudent = studentModel(
+      name: nameController.text,
+      age: ageController.text,
+      number: numberController.text,
+      email: emailController.text,
+      image: selectimage!.path,
+    );
+
+    await studentDb.putAt(index, updatedStudent);
+    getAllStud();
   }
 }

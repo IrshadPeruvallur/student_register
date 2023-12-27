@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:student_register/function/db_function.dart';
+import 'package:student_register/services/db_function.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/screen/home_screen.dart';
+import 'package:student_register/view/home_screen.dart';
 
 final TextEditingController nameController = TextEditingController();
 final TextEditingController ageController = TextEditingController();

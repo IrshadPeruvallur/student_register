@@ -2,35 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/screen/edit_screen.dart';
-import 'package:student_register/screen/home_screen.dart';
+import 'package:student_register/view/edit_screen.dart';
+import 'package:student_register/view/home_screen.dart';
 
-ValueNotifier<List<studentModel>> studenlistnotfier = ValueNotifier([]);
+ValueNotifier<List<StudentModel>> studenlistnotfier = ValueNotifier([]);
 
-Future<void> addstud(studentModel value) async {
-  final studentDb = await Hive.openBox<studentModel>("student_db");
+Future<void> addStudent(StudentModel value) async {
+  final studentDb = await Hive.openBox<StudentModel>("student_db");
   await studentDb.add(value);
-  getAllStud();
+  getAllStudent();
 }
 
-Future<void> getAllStud() async {
-  final studentDb = await Hive.openBox<studentModel>("student_db");
+Future<void> getAllStudent() async {
+  final studentDb = await Hive.openBox<StudentModel>("student_db");
   studenlistnotfier.value.clear();
   studenlistnotfier.value.addAll(studentDb.values);
   studenlistnotfier.notifyListeners();
 }
 
-Future<void> deletestud(int index) async {
-  final studentDb = await Hive.openBox<studentModel>("student_db");
+Future<void> deleteStudent(int index) async {
+  final studentDb = await Hive.openBox<StudentModel>("student_db");
   await studentDb.deleteAt(index);
-  getAllStud();
+  getAllStudent();
 }
 
 Future<void> updateStudent(int index) async {
-  final studentDb = await Hive.openBox<studentModel>("student_db");
+  final studentDb = await Hive.openBox<StudentModel>("student_db");
 
   if (index >= 0 && index < studentDb.length) {
-    final updatedStudent = studentModel(
+    final updatedStudent = StudentModel(
       name: nameController.text,
       age: ageController.text,
       number: numberController.text,
@@ -39,6 +39,6 @@ Future<void> updateStudent(int index) async {
     );
 
     await studentDb.putAt(index, updatedStudent);
-    getAllStud();
+    getAllStudent();
   }
 }

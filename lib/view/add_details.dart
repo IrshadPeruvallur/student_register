@@ -3,33 +3,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:student_register/function/db_function.dart';
+import 'package:provider/provider.dart';
+import 'package:student_register/controller/add_provider.dart';
+import 'package:student_register/services/db_function.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/screen/home_screen.dart';
-import 'package:student_register/screen/student_data.dart';
+import 'package:student_register/view/home_screen.dart';
+import 'package:student_register/view/student_data.dart';
 
-class AddDetails extends StatefulWidget {
+class AddDetails extends StatelessWidget {
   AddDetails({super.key});
 
   @override
-  State<AddDetails> createState() => _AddDetailsState();
-}
-
-class _AddDetailsState extends State<AddDetails> {
-  final _namecontroller = TextEditingController();
-
-  final _ageController = TextEditingController();
-
-  final _numberController = TextEditingController();
-
-  final _emailController = TextEditingController();
-  final ImagePicker imagePicker = ImagePicker();
-  File? picked;
-
-  final _formkey = GlobalKey<FormState>();
-
-  @override
   Widget build(BuildContext context) {
+    final getProvider = Provider.of<AddProvider>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color.fromARGB(255, 235, 245, 251),
@@ -43,7 +29,7 @@ class _AddDetailsState extends State<AddDetails> {
           automaticallyImplyLeading: false,
         ),
         body: Form(
-          key: _formkey,
+          key: getProvider.formkey,
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -53,27 +39,29 @@ class _AddDetailsState extends State<AddDetails> {
                     SizedBox(
                       height: 20,
                     ),
-                    GestureDetector(
-                      onTap: () => getimage(ImageSource.camera),
-                      child: CircleAvatar(
-                        backgroundColor: Color.fromARGB(255, 133, 193, 233),
-                        child: picked == null
-                            ? Icon(
-                                Icons.add_a_photo,
-                                color: Color.fromARGB(255, 27, 79, 144),
-                                size: 35,
-                              )
-                            : ClipOval(
-                                child: Image.file(
-                                  picked!,
-                                  fit: BoxFit.cover,
-                                  height: 120,
-                                  width: 120,
+                    Consumer<AddProvider>(builder: (context, value, child) {
+                      return GestureDetector(
+                        onTap: () => getProvider.getimage(ImageSource.camera),
+                        child: CircleAvatar(
+                          backgroundColor: Color.fromARGB(255, 133, 193, 233),
+                          child: value.picked == null
+                              ? Icon(
+                                  Icons.add_a_photo,
+                                  color: Color.fromARGB(255, 27, 79, 144),
+                                  size: 35,
+                                )
+                              : ClipOval(
+                                  child: Image.file(
+                                    value.picked!,
+                                    fit: BoxFit.cover,
+                                    height: 120,
+                                    width: 120,
+                                  ),
                                 ),
-                              ),
-                        radius: 60,
-                      ),
-                    ),
+                          radius: 60,
+                        ),
+                      );
+                    }),
                     SizedBox(
                       height: 10,
                     ),
@@ -83,7 +71,7 @@ class _AddDetailsState extends State<AddDetails> {
                             Color.fromARGB(255, 27, 79, 144)),
                       ),
                       onPressed: () {
-                        getimage(ImageSource.gallery);
+                        getProvider.getimage(ImageSource.gallery);
                       },
                       child: Text("Choose from Gallery"),
                     ),
@@ -95,7 +83,7 @@ class _AddDetailsState extends State<AddDetails> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-z\s]'))
                       ],
-                      controller: _namecontroller,
+                      controller: getProvider.namecontroller,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
@@ -119,7 +107,7 @@ class _AddDetailsState extends State<AddDetails> {
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        controller: _ageController,
+                        controller: getProvider.ageController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -140,7 +128,7 @@ class _AddDetailsState extends State<AddDetails> {
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        controller: _numberController,
+                        controller: getProvider.numberController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -159,7 +147,7 @@ class _AddDetailsState extends State<AddDetails> {
                         }),
                     TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        controller: _emailController,
+                        controller: getProvider.emailController,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
@@ -186,8 +174,8 @@ class _AddDetailsState extends State<AddDetails> {
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15)))),
                         onPressed: () {
-                          if (_formkey.currentState!.validate()) {
-                            onAddStudentOnClick();
+                          if (getProvider.formkey.currentState!.validate()) {
+                            getProvider.onAddStudentOnClick();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -201,31 +189,5 @@ class _AddDetailsState extends State<AddDetails> {
         ),
       ),
     );
-  }
-
-  Future<void> onAddStudentOnClick() async {
-    final _name = _namecontroller.text.trim();
-    final _number = _numberController.text.trim();
-    final _age = _ageController.text.trim();
-    final _email = _emailController.text.trim();
-    if (_name.isEmpty || _number.isEmpty || _age.isEmpty) {
-      return;
-    }
-
-    final _student = studentModel(
-        name: _name,
-        age: _age,
-        number: _number,
-        email: _email,
-        image: picked?.path ?? '');
-
-    addstud(_student);
-  }
-
-  getimage(ImageSource source) async {
-    var img = await imagePicker.pickImage(source: source);
-    setState(() {
-      picked = File(img!.path);
-    });
   }
 }

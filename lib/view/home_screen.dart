@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:student_register/function/db_function.dart';
+import 'package:student_register/services/db_function.dart';
 import 'package:student_register/model/data_model.dart';
-import 'package:student_register/screen/add_details.dart';
-import 'package:student_register/screen/edit_screen.dart';
-import 'package:student_register/screen/student_data.dart';
+import 'package:student_register/view/add_details.dart';
+import 'package:student_register/view/edit_screen.dart';
+import 'package:student_register/view/student_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,8 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
-  List<studentModel> studentList = [];
-  List<studentModel> filteredStudentList = [];
+  List<StudentModel> studentList = [];
+  List<StudentModel> filteredStudentList = [];
 
   bool isSearching = false;
 
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Initialize your studentList here, e.g., calling getAllStud()
-    getAllStud();
+    getAllStudent();
   }
 
   void filterStudents(String search) {
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildStudentCard(studentModel data, int index) {
+  Widget buildStudentCard(StudentModel data, int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
       child: Card(
@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  deletestud(index);
+                  deleteStudent(index);
                 },
                 icon: Icon(Icons.delete_rounded),
               ),
@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return ValueListenableBuilder(
       valueListenable: studenlistnotfier,
       builder:
-          (BuildContext ctx, List<studentModel> studentlist, Widget? child) {
+          (BuildContext ctx, List<StudentModel> studentlist, Widget? child) {
         studentList = studentlist;
         filteredStudentList = List.from(studentList);
 

@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 part 'data_model.g.dart';
 
 @HiveType(typeId: 1)
-class studentModel {
+class StudentModel {
   @HiveField(0)
   int? index;
 
@@ -17,7 +16,7 @@ class studentModel {
   late final String email;
   @HiveField(5)
   late final String image;
-  studentModel(
+  StudentModel(
       {required this.name,
       required this.age,
       required this.number,
